@@ -6,7 +6,7 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Stdlib\DateTime;
 
-class Wishlist extends \Magento\wishlist\Model\Wishlist
+class Wishlist extends \Magento\Wishlist\Model\Wishlist
 {
     protected function _addCatalogProduct(Product $product, $qty = 1, $forciblySetQty = false)
     {
