@@ -2,65 +2,86 @@
 
 namespace Man\Assignment\Observer;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\ObserverInterface;
-use Magento\Framework\Mail\Template\TransportBuilder;
-use Magento\Store\Model\ScopeInterface;
-use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Event\ObserverInterface as ObserverInterfaceAlias;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Mail\Template\TransportBuilder as TransportBuilderAlias;
+use Magento\Quote\Model\QuoteFactory;
+use Magento\Customer\Model\Session as CustomerSession;
 use Psr\Log\LoggerInterface;
-
-class AddToCart implements ObserverInterface
+use Magento\Store\Model\StoreManagerInterface;
+class AddToCart implements ObserverInterfaceAlias
 {
-    protected $transportBuilder;
     protected $storeManager;
+    protected $transportBuilder;
+    protected $scopeConfig;
+    protected $quoteFactory;
+    protected $customerSession;
     protected $logger;
 
     public function __construct(
-        TransportBuilder $transportBuilder,
         StoreManagerInterface $storeManager,
-        LoggerInterface $logger
-    ) {
-        $this->transportBuilder = $transportBuilder;
+        TransportBuilderAlias $transportBuilder,
+        ScopeConfigInterface  $scopeConfig,
+        QuoteFactory          $quoteFactory,
+        CustomerSession       $customerSession,
+        LoggerInterface       $logger
+    )
+    {
         $this->storeManager = $storeManager;
+        $this->transportBuilder = $transportBuilder;
+        $this->scopeConfig = $scopeConfig;
+        $this->quoteFactory = $quoteFactory;
+        $this->customerSession = $customerSession;
         $this->logger = $logger;
     }
 
     public function execute(Observer $observer)
     {
-        $item = $observer->getEvent()->getData('quote_item');
-        $cart = $item->getQuote();
-        $customerId = $cart->getCustomer()->getId();
-        $itemsCount = $cart->getItemsCount();
 
-        $this->logger->debug('AddToCart observer executing with customerId: ' . $customerId . ' and itemsCount: ' . $itemsCount);
+        $cart = $observer->getCart();
+        $quote = $cart->getQuote();
+        $cartItems = $quote->getItemsCount();
+        $this->logger->debug($cartItems);
 
-        if ($customerId && $itemsCount > 5) {
-            $customerEmail = $cart->getCustomer()->getEmail();
-            $customerName = $cart->getCustomer()->getName();
-            $storeId = $cart->getStoreId();
-            $store = $this->storeManager->getStore($storeId);
-            $templateVars = [
-                'customer_name' => $customerName,
-                'items_count' => $itemsCount
+        if ($cartItems > 5) {
+            // Just to Check if the function is called or not
+            $this->logger->debug('Function called');
+
+//             Receiver Detail
+            $receiverInfo = [
+                'name' => 'manoli',
+                'email' => 'manoli.shah@sigmainfo.net'
             ];
-            $transport = $this->transportBuilder
-                ->setTemplateIdentifier('email_template_identifier')
-                ->setTemplateOptions([
-                    'area' => \Magento\Framework\App\Area::AREA_FRONTEND,
-                    'store' => $storeId,
-                ])
-                ->setTemplateVars($templateVars)
-                ->setFrom('general')
-                ->addTo($customerEmail, $customerName)
-                ->getTransport();
 
-            $this->logger->debug('Sending email to ' . $customerEmail . ' with templateVars: ' . print_r($templateVars, true));
+//            This line gets the current store information.
+
+            $store = $this->storeManager->getStore();
+
+//            This array defines the template variables for the email.
+
+            $templateParams = ['administrator_name' => $receiverInfo['name'],
+                'cartItems' => $cartItems ];
+
+            $transport = $this->transportBuilder->setTemplateIdentifier(
+                'sales_email_order_template'
+            )->setTemplateOptions(
+                ['area' => 'frontend', 'store' => $store->getId()]
+            )->addTo(
+                $receiverInfo['email'], $receiverInfo['name']
+            )->setTemplateVars(
+                $templateParams
+            )->setFrom(
+                'general'
+            )->getTransport();
 
             try {
+                // Send an email
                 $transport->sendMessage();
             } catch (\Exception $e) {
-                $this->logger->error('Error sending email: ' . $e->getMessage());
+                // Write a log message whenever get errors
+                $this->logger->critical($e->getMessage());
             }
         }
-    }
-}
+    }}
