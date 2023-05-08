@@ -65,7 +65,7 @@ class AddToCart implements ObserverInterfaceAlias
                 'cartItems' => $cartItems ];
 
             $transport = $this->transportBuilder->setTemplateIdentifier(
-                'sales_email_order_template'
+                3
             )->setTemplateOptions(
                 ['area' => 'frontend', 'store' => $store->getId()]
             )->addTo(
