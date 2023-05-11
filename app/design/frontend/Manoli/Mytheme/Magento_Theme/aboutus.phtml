@@ -1,0 +1,7 @@
+<?php
+$blockId = 'about_us'; // Replace with your CMS block identifier
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$block = $objectManager->get('\Magento\Cms\Block\Block');
+$content = $block->setBlockId($blockId)->toHtml();
+echo $content;
+?>

@@ -8,7 +8,17 @@
             </arguments>
         </referenceBlock>
 
+        <referenceBlock name="footer_links">
+            <block class="Magento\Framework\View\Element\Html\Link\Current" name="custom-footer-link">
+            <arguments>
+                <argument name="label" xsi:type="string">Test</argument>
+            </arguments>
+            </block>
+        </referenceBlock>
+        <referenceBlock name="catalog-search-advanced-link" remove="true"/>
+
         <referenceBlock name="copyright" remove="true"/>
+
         <referenceBlock name="top.links">
             <block class="Magento\Customer\Block\Account\RegisterLink" name="register-link">
                 <arguments>
