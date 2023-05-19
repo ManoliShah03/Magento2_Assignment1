@@ -25,7 +25,7 @@ use Magento\Customer\Block\Widget\Name;
         <?php $_gender = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Gender::class) ?>
 
         <!--        Custom Phone number -->
-        <?php $_phoneNumber = $block->getLayout()->createBlock(\CONTACT\Custom\Block\Widget\PhoneNumber::class) ?>
+        <?php $_phoneNumber = $block->getLayout()->createBlock(\Custom\Customer\Block\Widget\PhoneNumber::class) ?>
 
         <?php if ($_dob->isEnabled()): ?>
             <?= $_dob->setDate($block->getCustomer()->getDob())->toHtml() ?>
