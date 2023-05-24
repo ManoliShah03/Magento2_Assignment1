@@ -101,3 +101,4 @@ class Freeshipping extends Template
         }
     }
 }
+
