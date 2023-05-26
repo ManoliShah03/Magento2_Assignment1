@@ -1,4 +1,5 @@
 var config = {
+
     "map" : {
         "*": {
             'Magento_Checkout/js/model/shipping-save-processor/default' : 'Sigma_ShippingAddress/js/model/shipping-save-processor/default',
