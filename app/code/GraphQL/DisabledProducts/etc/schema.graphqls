@@ -1,21 +1,22 @@
 type Query {
+    #Assignment1
     disabledProductsList: [GetAllDisableProducts] @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\GetAllDisabledProducts") @doc(description: "Get All disable Product Data")
+
+    #Assignment2
     dailyDeal: DailyDealResponse! @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\GetSpecialPriceProducts") @doc(description: "Get list of special price products")
-    customerList(pageSize: Int!
-        currentPage: Int!
-      ): CustomerList! @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\CustomerList")
 
-  storeConfig(
-    store: String
-  ): StoreConfig! @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\StoreConfig")
+     #Assignment4
+     products(search: String, pageSize: Int = 20): ProductResult @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\ProductBrand") @doc(description: "Query to retrieve a list of products with pagination.")
+
+    #Assignment5
+    customerList(pageSize: Int! currentPage: Int!): CustomerList! @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\CustomerList")
+
+     #Assignment7
+     storeConfig(store: String): StoreConfig! @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\StoreConfig") @doc(description: "System Config ")
+
 }
 
-type StoreConfig {
-  website_default_title: String
-  website_default_index: String
-}
-
-
+#Assignment1
 type GetAllDisableProducts {
     entityId: Int @doc(description: "Primary Id"),
     proName: String @doc(description: "Product Name"),
@@ -24,10 +25,58 @@ type GetAllDisableProducts {
     weight: Int @doc(description: "Weight of Product"),
 }
 
+#Assignment2
 type DailyDealResponse {
   products_skus: [String!]! @doc(description: "List of product SKUs")
 }
 
+#Assignment3
+type Mutation {
+    createProduct(product: ProductInput!): Product! @resolver(class: "GraphQl\\DisabledProducts\\Model\\Resolver\\CreateProduct")
+}
+
+type Product {
+    id: ID!
+    name: String!
+    description: String!
+    price: Float!
+}
+
+input ProductInput {
+    sku: String!
+    name: String!
+    description: String!
+    price: Float!
+}
+
+#Assignment4
+type ProductResult {
+  total_count: Int!
+  items: [Product]
+  page_info: PageInfo!
+}
+
+type Product {
+  name: String!
+  sku: String!
+  brand: String!
+  price_range: PriceRange
+}
+
+type PriceRange {
+  minimum_price: [RegularPrice]
+}
+
+type RegularPrice {
+  regular_price: RegularPriceInfo
+}
+
+type RegularPriceInfo {
+  value: Int
+  currency: String
+}
+
+#Assignment5
 type CustomerList {
   success: Boolean! @doc(description: "Indicates if the request was successful")
   message: String! @doc(description: "Error message, if any")
@@ -48,6 +97,7 @@ type PageInfo {
   total_pages: Int! @doc(description: "Total number of pages")
 }
 
+#Assignment6
 type Mutation {
   generateCustomerToken(
     email: String!
@@ -61,4 +111,23 @@ type GenerateCustomerTokenOutput {
   group: String!
   newsletter_subscribe: String!
 }
+
+#Assignment7
+type StoreConfig {
+  website_default_title: String
+  website_default_index: String
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 

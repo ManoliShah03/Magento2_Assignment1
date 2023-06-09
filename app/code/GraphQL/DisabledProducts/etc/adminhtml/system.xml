@@ -10,11 +10,16 @@
             <resource>Magento_Config::config</resource>
             <group id="custom_field" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Custom Field</label>
-                <field id="custom_field_value" translate="label comment" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Custom Field Value</label>
-                    <comment>Enter a value for the custom field.</comment>
+                <field id="website_default_title" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Website Default Title</label>
+                    <comment>Enter the default title for the website.</comment>
+                </field>
+                <field id="website_default_index" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Website Default Index</label>
+                    <comment>Enter the default index for the website.</comment>
                 </field>
             </group>
         </section>
     </system>
 </config>
+

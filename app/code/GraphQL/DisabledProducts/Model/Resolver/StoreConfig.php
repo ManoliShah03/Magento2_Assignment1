@@ -1,15 +1,11 @@
 <?php
 
-
 namespace GraphQL\DisabledProducts\Model\Resolver;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
-use GraphQL\Deferred;
+use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
 class StoreConfig implements ResolverInterface
 {
@@ -19,6 +15,7 @@ class StoreConfig implements ResolverInterface
     private $scopeConfig;
 
     /**
+     * StoreConfig constructor.
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(ScopeConfigInterface $scopeConfig)
@@ -27,27 +24,46 @@ class StoreConfig implements ResolverInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function resolve(Field $field, $context, $info, array $value = null, array $args = null): Value
+    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        $executor = function () use ($field, $context, $info, $value, $args) {
-            $websiteDefaultTitle = $this->scopeConfig->getValue(
-                'general/store_info/website_default_title',
-                ScopeInterface::SCOPE_STORE
-            );
+        $storeConfigData = $this->getAllStoreConfigValues();
 
-            $websiteDefaultIndex = $this->scopeConfig->getValue(
-                'general/store_info/website_default_index',
-                ScopeInterface::SCOPE_STORE
-            );
+        return $storeConfigData;
+    }
 
-            return [
-                'website_default_title' => $websiteDefaultTitle,
-                'website_default_index' => $websiteDefaultIndex,
-            ];
-        };
+    /**
+     * Fetch all system configuration values
+     *
+     * @return array
+     */
+    private function getAllStoreConfigValues(): array
+    {
+        $storeConfigData = [];
 
-        return new Value(new Deferred($executor));
+        $configPaths = [
+            'custom_group/custom_field/website_default_title',
+            'custom_group/custom_field/website_default_index',
+        ];
+
+        foreach ($configPaths as $path) {
+            $value = $this->scopeConfig->getValue($path);
+            $storeConfigData[$this->getConfigKeyFromPath($path)] = $value;
+        }
+
+        return $storeConfigData;
+    }
+
+    /**
+     * Get the configuration key from the configuration path
+     *
+     * @param string $path
+     * @return string
+     */
+    private function getConfigKeyFromPath(string $path): string
+    {
+        $pathParts = explode('/', $path);
+        return end($pathParts);
     }
 }
