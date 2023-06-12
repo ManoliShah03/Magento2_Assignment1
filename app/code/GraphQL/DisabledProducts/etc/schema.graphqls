@@ -14,7 +14,11 @@ type Query {
      #Assignment7
      storeConfig(store: String): StoreConfig! @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\StoreConfig") @doc(description: "System Config ")
 
+     #Assignment10
+     orders(startDate: String! @doc(description: "Start Date"), endDate: String! @doc(description: "End Date")): [Order] @resolver(class: "GraphQL\\DisabledProducts\\Model\\Resolver\\OrderDetails") @doc(description: "Get Order Details")
+
 }
+
 
 #Assignment1
 type GetAllDisableProducts {
@@ -118,9 +122,18 @@ type StoreConfig {
   website_default_index: String
 }
 
+#Assignment10
+type Order {
+  order_id: Int @doc(description: "Order Id")
+  increment_id: String @doc(description: "Increment Id")
+  items: [Item] @doc(description: "Item details")
+}
 
-
-
+type Item {
+  item_id: Int @doc(description: "Product Id")
+  item_name: String @doc(description: "Product Name")
+  qty: Int @doc(description: "Quantity of Product")
+}
 
 
 
